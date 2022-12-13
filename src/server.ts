@@ -32,16 +32,25 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
 
   app.get('/filteredimage', async (req, res) =>{
-    const image_url  = req.query.image_url.toString();
-    if (!image_url) {
-      res.status(400).send('URL Required');
-    }
+    try {
+      const image_url  = req.query.image_url.toString();
+      if (!image_url) {
+        res.status(400).send('URL Required');
+      }
 
-    const filtered_image = await filterImageFromURL(image_url);
+      const filtered_image = await filterImageFromURL(image_url);
 
-    res.status(200).sendFile(filtered_image, () => {
-      deleteLocalFiles([filtered_image]);
-    });
+      res.status(200).sendFile(filtered_image, () => {
+        deleteLocalFiles([filtered_image]);
+      });
+
+      // it should ideally throw an error message on the browser ( with error code 422 )
+
+    } catch (error) {
+
+        console.log("Please provide a valid link")
+        return res.status(422).send("Invalid image provided");
+      }
   });
 
   
